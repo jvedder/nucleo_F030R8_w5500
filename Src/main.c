@@ -36,8 +36,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define USE_GPIO 0
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -55,6 +53,10 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
+static uint8_t read_buf[16];
+static uint8_t write_buf[16];
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -66,6 +68,7 @@ static void MX_SPI2_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
+static void Show_buf(const char *name, const uint8_t *buf);
 
 /* USER CODE END PFP */
 
@@ -116,34 +119,50 @@ int main(void)
 
   W5500_Init();
 
-  W5500_SoftReset();
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      W5500_Write(0x0A, 0x0B, 0x0C, 0x0D);
-      //Delay_ms(10);
-      W5500_Read(0x0A, 0x0B, 0x0C, 0x0D);
+      write_buf[0] = 0x0A;
+      write_buf[1] = 0x0B;
+      write_buf[2] = 0x0C;
+      write_buf[3] = 0x0D;
+
+      /* Use GAR as a buffer */
+      Show_buf("WR", write_buf);
+      W5500_WriteGAR(write_buf);
+      W5500_ReadGAR(read_buf);
+      Show_buf("RD", read_buf);
+      printf("\r\n");
       Delay_ms(10);
 
-      W5500_Write(0x55, 0xAA, 0x55, 0xAA);
-      //Delay_ms(10);
-      W5500_Read(0x55, 0xAA, 0x55, 0xAA);
+      write_buf[0] = 0x55;
+      write_buf[1] = 0xAA;
+      write_buf[2] = 0x55;
+      write_buf[3] = 0xAA;
+
+      /* Use SUBR as a buffer */
+      Show_buf("WR", write_buf);
+      W5500_WriteSUBR(write_buf);
+      W5500_ReadSUBR(read_buf);
+      Show_buf("RD", read_buf);
+      printf("\r\n");
       Delay_ms(10);
 
-      W5500_Write(0x12, 0x34, 0x56, 0x78);
-      //Delay_ms(10);
-      W5500_Read(0x12, 0x34, 0x56, 0x78);
-      Delay_ms(10);
+      write_buf[0] = 0x12;
+      write_buf[1] = 0x34;
+      write_buf[2] = 0x56;
+      write_buf[3] = 0x78;
 
-      W5500_Write(0xAA, 0x55, 0xAA, 0x55);
-      //Delay_ms(10);
-      W5500_Read(0xAA, 0x55, 0xAA, 0x55);
+      /* Use SIPR as buffer */
+      Show_buf("WR", write_buf);
+      W5500_WriteSIPR(write_buf);
+      W5500_ReadSIPR(read_buf);
+      Show_buf("RD", read_buf);
+      printf("\r\n");
       Delay_ms(10);
-
 
     /* USER CODE END WHILE */
 
@@ -362,6 +381,17 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+void Show_buf(const char *name, const uint8_t *buf)
+{
+    printf(name);
+    printf(":");
+    for (int i=0; i< 4 ;i++)
+    {
+        printf(" 0x%02X", (uint16_t) buf[i]);
+    }
+    printf("\r\n");
+}
 
 /**
  * Delay using a spin wait for the specified number of milliseconds.
