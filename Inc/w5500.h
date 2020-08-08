@@ -3,8 +3,9 @@
  * @file           : w5500.h
  * @brief          : Driver for the Wiznet W5500 Ethernet Chip
  ******************************************************************************
- * @attention
- *
+ */
+/**
+ ******************************************************************************
  * MIT License
  *
  * Copyright (c) 2020 John Vedder
@@ -30,15 +31,37 @@
  ******************************************************************************
  */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+
+/* Prevent recursive inclusion */
 #ifndef W5500_H
 #define W5500_H
 
+/**
+ *  Include files
+ */
+#include <stdint.h>
+
+
+/**
+ *  Public Defines and Macros
+ */
+
+/* The number of sockets in the W5500 */
 #define W5500_MAX_SOCKET_NUM            8
+
+/* The size of each socket buffer is 2K byes */
+#define W5500_RXBUF_SIZE                0x0800
+#define W5500_TXBUF_SIZE                0x0800
+
+/* bit mask for the socket buffer address range */
+#define W5500_RXBUF_MASK                0x07FF
+#define W5500_TXBUF_MASK                0x07FF
+
 
 /**
  * Note: all register addresses are 8-bit, so they are defines as such
  */
+
 
 /* Common Register Address Definitions */
 #define W5500_REG_MR                    0x00    /* Mode Reg */
@@ -89,11 +112,11 @@
 #define W5500_REG_SnKPALVTR             0x2F    /* Keep Alive Timer */
 
 
-/* Control Byte Definitions */
+///* Control Byte Definitions and Macros */
 #define W5500_CB_REG                    0x00            /* Common Registers Block */
-#define W5500_CB_SnREG(n)               (0x01|(n<5))    /* Socket N Register Block */
-#define W5500_CB_SnTx(n)                (0x02|(n<5))    /* Socket N Transmit Block */
-#define W5500_CB_SnRX(n)                (0x03|(n<5))    /* Socket N Receive Block */
+#define W5500_CB_SnREG(n)               (0x01|(n<<5))   /* Socket N Register Block */
+#define W5500_CB_SnTx(n)                (0x02|(n<<5))   /* Socket N Transmit Block */
+#define W5500_CB_SnRX(n)                (0x03|(n<<5))   /* Socket N Receive Block */
 #define W5500_CB_READ                   0x00            /* Control Byte Read Mask */
 #define W5500_CB_WRITE                  0x04            /* Control Byte Write Mask */
 
@@ -120,7 +143,6 @@
 #define W5500_WriteUPORTR(val)          W5500_WriteReg16(W5500_CB_REG, W5500_REG_UPORTR, val)
 #define W5500_WritePHYCFGR(val)         W5500_WriteReg8(W5500_CB_REG, W5500_REG_PHYCFGR, val)
 #define W5500_WriteVERSIONR(val)        W5500_WriteReg8(W5500_CB_REG, W5500_REG_VERSIONR, val)
-
 
 /* Socket N Register Write Macros */
 #define W5500_WriteSnMR(s,val)          W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnMR, val)
@@ -170,7 +192,6 @@
 #define W5500_ReadPHYCFGR()             W5500_ReadReg8(W5500_CB_REG, W5500_REG_PHYCFGR)
 #define W5500_ReadVERSIONR()            W5500_ReadReg8(W5500_CB_REG, W5500_REG_VERSIONR)
 
-
 /* Socket N Register Read Macros */
 #define W5500_ReadSnMR(s)               W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnMR)
 #define W5500_ReadSnCR(s)               W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnCR)
@@ -185,10 +206,10 @@
 #define W5500_ReadSnTTL(s)              W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTTL)
 #define W5500_ReadSnRXBUF_SIZE(s)       W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnRXBUF_SIZE)
 #define W5500_ReadSnTXBUF_SIZE(s)       W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTXBUF_SIZE)
-#define W5500_ReadSnTX_FSR(s)           W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_FSR)
+#define W5500_ReadSnTX_FSR(s)           W5500_ReadReg16Val(W5500_CB_SnREG(s), W5500_REG_SnTX_FSR)
 #define W5500_ReadSnTX_RD(s)            W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_RD)
 #define W5500_ReadSnTX_WR(s)            W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_WR)
-#define W5500_ReadSnRX_RSR(s)           W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RSR)
+#define W5500_ReadSnRX_RSR(s)           W5500_ReadReg16Val(W5500_CB_SnREG(s), W5500_REG_SnRX_RSR)
 #define W5500_ReadSnRX_RD(s)            W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RD)
 #define W5500_ReadSnRX_WR(s)            W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_WR)
 #define W5500_ReadSnIMR(s)              W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnIMR)
@@ -196,21 +217,28 @@
 #define W5500_ReadSnKPALVTR(s)          W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnKPALVTR)
 
 
+/* Receive and Transmit Buffer Write and Read Macros */
+#define W5500_WriteSnRXBuf(s, addr, buf, len)   W5500_WriteBuf(W5500_CB_SnRX(s), addr, buf, len)
+#define W5500_WriteSnTXBuf(s, addr, buf, len)   W5500_WriteBuf(W5500_CB_SnTX(s), addr, buf, len)
+#define W5500_ReadSnRXBuf(s, addr, buf, len)    W5500_ReadBuf(W5500_CB_SnRX(s), addr, buf, len)
+#define W5500_ReadSnTXBuf(s, addr, buf, len)    W5500_ReadBuf(W5500_CB_SnTX(s), addr, buf, len)
+
+
 /* Long Name convenience macros  */
-#define W5500_setGatewayIp(ptr)         W5500_WriteGAR(ptr)
-#define W5500_getGatewayIp(ptr)         W5500_ReadGAR(ptr)
+#define W5500_setGatewayIp(ptr)             W5500_SetGAR(ptr)
+#define W5500_getGatewayIp(ptr)             W5500_GetGAR(ptr)
 
-#define W5500_setSubnetMask(ptr)        W5500_WriteSUBR(ptr)
-#define W5500_getSubnetMask(ptr)        W5500_ReadSUBR(ptr)
+#define W5500_setSubnetMask(ptr)            W5500_SetSUBR(ptr)
+#define W5500_getSubnetMask(ptr)            W5500_GetSUBR(ptr)
 
-#define W5500_setMACAddress(ptr)        W5500_WriteSHAR(ptr)
-#define W5500_getMACAddress(ptr)        W5500_ReadSHAR(ptr)
+#define W5500_setMACAddress(ptr)            W5500_SetSHAR(ptr)
+#define W5500_getMACAddress(ptr)            W5500_GetSHAR(ptr)
 
-#define W5500_setIPAddress(ptr)         W5500_WriteSIPR(ptr)
-#define W5500_getIPAddress(ptr)         W5500_ReadSIPR(ptr)
+#define W5500_setIPAddress(ptr)             W5500_SetSIPR(ptr)
+#define W5500_getIPAddress(ptr)             W5500_GetSIPR(ptr)
 
-#define W5500_setRetransmissionTime(val)    W5500_WriteRTR(val)
-#define W5500_setRetransmissionCount(val)   W5500_WriteRCR(val)
+#define W5500_setRetransmissionTime(val)    W5500_SetRTR(val)
+#define W5500_setRetransmissionCount(val)   W5500_SetRCR(val)
 
 
 /* Common Mode Register (MR) Values */
@@ -255,8 +283,8 @@
 #define W5500_SnMR_BCASTB                   0x40
 #define W5500_SnMR_ND                       0x20
 #define W5500_SnMR_UCASTB                   0x10
+#define W5500_SnMR_PROTOCOL                 0x0F    /* Protocol Mask bits */
 #define W5500_SnMR_MACRAW                   0x04
-#define W5500_SnMR_IPRAW                    0x03     /**< IP LAYER RAW SOCK */
 #define W5500_SnMR_UDP                      0x02
 #define W5500_SnMR_TCP                      0x01
 #define W5500_SnMR_CLOSE                    0x00
@@ -264,9 +292,6 @@
 #define W5500_SnMR_MMB                      W5500_SnMR_ND
 #define W5500_SnMR_MIP6B                    W5500_SnMR_UCASTB
 #define W5500_SnMR_MC                       W5500_SnMR_ND
-/* Convenience Names */
-#define SOCK_STREAM                         W5500_SnMR_TCP
-#define SOCK_DGRAM                          W5500_SnMR_UDP
 
 /* Socket N Command Register (SnCR) Values */
 #define W5500_SnCR_OPEN                     0x01
@@ -279,17 +304,6 @@
 #define W5500_SnCR_SEND_KEEP                0x22
 #define W5500_SnCR_RECV                     0x40
 
-/* Convenience Names */
-#define SOCK_OPEN                       W5500_SnCR_OPEN
-#define SOCK_LISTEN                     W5500_SnCR_LISTEN
-#define SOCK_CONNECT                    W5500_SnCR_CONNECT
-#define SOCK_DISCON                     W5500_SnCR_DISCON
-#define SOCK_CLOSE                      W5500_SnCR_CLOSE
-#define SOCK_SEND                       W5500_SnCR_SEND
-#define SOCK_SEND_MAC                   W5500_SnCR_SEND_MAC
-#define SOCK_SEND_KEEP                  W5500_SnCR_SEND_KEEP
-#define SOCK_RECV                       W5500_SnCR_RECV
-
 /* Socket N Interrupt Register (SnIR) Values */
 #define W5500_SnIR_SENDOK                   0x10
 #define W5500_SnIR_TIMEOUT                  0x08
@@ -297,7 +311,7 @@
 #define W5500_SnIR_DISCON                   0x02
 #define W5500_SnIR_CON                      0x01
 
-/* Socket N Status Regiser (SnSR) Values */
+/* Socket N Status Register (SnSR) Values */
 #define W5500_SnSR_CLOSED                   0x00
 #define W5500_SnSR_INIT                     0x13
 #define W5500_SnSR_LISTEN                   0x14
@@ -327,21 +341,26 @@
 #define IPPROTO_RAW                         255      //< Raw IP packet
 
 
-/* Critical Code Section Markers -- update if using threads */
+/* Critical Code Section Markers -- update if using threads to protect SPI transmissions */
 #define W5500_CRITICAL_ENTER()
 #define W5500_CRITICAL_EXIT()
 
 
-/* Exported Function Prototypes */
+/**
+ *  Public Function Prototypes
+ */
 void W5500_Init();
 void W5500_SoftReset();
-void W5500_execSnCmd(uint8_t s, uint8_t cmd);
 void W5500_WriteReg8(uint8_t bsb, uint8_t reg, uint8_t val);
 void W5500_WriteReg16(uint8_t bsb, uint8_t reg, uint16_t val);
 uint8_t W5500_ReadReg8(uint8_t bsb, uint8_t reg);
 uint16_t W5500_ReadReg16(uint8_t bsb, uint8_t reg);
+uint16_t W5500_ReadReg16Val(uint8_t bsb, uint8_t reg);
 void W5500_WriteBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len);
 void W5500_ReadBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len);
+void W5500_WriteTxBuffer(uint8_t sn, uint8_t *buf, uint16_t len);
+void W5500_ReadRXBuffer(uint8_t sn, uint8_t *buf, uint16_t len);
+
 
 
 #endif /* W5500_H */

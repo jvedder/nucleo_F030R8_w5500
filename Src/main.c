@@ -18,10 +18,14 @@
   */
 /* USER CODE END Header */
 
-/* Includes ------------------------------------------------------------------*/
+/*
+ *  Include Files
+ */
 #include "main.h"
 #include "w5500.h"
+#include "socket.h"
 #include <stdio.h>
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -43,23 +47,30 @@
 
 /* USER CODE END PM */
 
-/* Private variables ---------------------------------------------------------*/
+/**
+ *  Private variables
+ */
 RTC_HandleTypeDef hrtc;
 
 SPI_HandleTypeDef hspi2;
 
 UART_HandleTypeDef huart2;
 
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
 
+/* USER CODE BEGIN PV */
+
+/**
+ * Private variables
+ */
 static uint8_t read_buf[16];
 static uint8_t write_buf[16];
 
 
 /* USER CODE END PV */
 
-/* Private function prototypes -----------------------------------------------*/
+/**
+ *  Private function prototypes
+ */
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
@@ -123,47 +134,51 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf("Press Blue User Button.\r\n");
+
   while (1)
   {
-      write_buf[0] = 0x0A;
-      write_buf[1] = 0x0B;
-      write_buf[2] = 0x0C;
-      write_buf[3] = 0x0D;
+      if (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port,USER_BUTTON_Pin) == GPIO_PIN_RESET)
+      {
+          write_buf[0] = 0x0A;
+          write_buf[1] = 0x0B;
+          write_buf[2] = 0x0C;
+          write_buf[3] = 0x0D;
 
-      /* Use GAR as a buffer */
-      Show_buf("WR", write_buf);
-      W5500_WriteGAR(write_buf);
-      W5500_ReadGAR(read_buf);
-      Show_buf("RD", read_buf);
-      printf("\r\n");
-      Delay_ms(10);
+          /* Use GAR as a buffer */
+          Show_buf("WR", write_buf);
+          W5500_WriteGAR(write_buf);
+          W5500_ReadGAR(read_buf);
+          Show_buf("RD", read_buf);
+          printf("\r\n");
+          Delay_ms(10);
 
-      write_buf[0] = 0x55;
-      write_buf[1] = 0xAA;
-      write_buf[2] = 0x55;
-      write_buf[3] = 0xAA;
+          write_buf[0] = 0x55;
+          write_buf[1] = 0xAA;
+          write_buf[2] = 0x55;
+          write_buf[3] = 0xAA;
 
-      /* Use SUBR as a buffer */
-      Show_buf("WR", write_buf);
-      W5500_WriteSUBR(write_buf);
-      W5500_ReadSUBR(read_buf);
-      Show_buf("RD", read_buf);
-      printf("\r\n");
-      Delay_ms(10);
+          /* Use SUBR as a buffer */
+          Show_buf("WR", write_buf);
+          W5500_WriteSUBR(write_buf);
+          W5500_ReadSUBR(read_buf);
+          Show_buf("RD", read_buf);
+          printf("\r\n");
+          Delay_ms(10);
 
-      write_buf[0] = 0x12;
-      write_buf[1] = 0x34;
-      write_buf[2] = 0x56;
-      write_buf[3] = 0x78;
+          write_buf[0] = 0x12;
+          write_buf[1] = 0x34;
+          write_buf[2] = 0x56;
+          write_buf[3] = 0x78;
 
-      /* Use SIPR as buffer */
-      Show_buf("WR", write_buf);
-      W5500_WriteSIPR(write_buf);
-      W5500_ReadSIPR(read_buf);
-      Show_buf("RD", read_buf);
-      printf("\r\n");
-      Delay_ms(10);
-
+          /* Use SIPR as buffer */
+          Show_buf("WR", write_buf);
+          W5500_WriteSIPR(write_buf);
+          W5500_ReadSIPR(read_buf);
+          Show_buf("RD", read_buf);
+          printf("\r\n");
+          Delay_ms(10);
+      }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
