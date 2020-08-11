@@ -264,339 +264,453 @@ void W5500_ExecuteSnCmd(uint8_t sn, uint8_t cmd);
 /* TODO: does this need a namespace prefix? */
 #define INLINE   __attribute__((always_inline)) static inline
 
-/* Receive and Transmit Buffer Write and Read Methods */
+/**
+ * Receive and Transmit Buffer Write and Read Methods
+ */
+
+/**
+ * Writes to the Receive Buffer for the specified socket.
+ * The caller is responsible for determining the address
+ * and number of bytes to write.
+ */
 INLINE void W5500_WriteSnRXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
         uint16_t len)
 {
     W5500_WriteBuf(W5500_CB_SnRX(s), addr, buf, len);
 }
+
+/**
+ * Writes to the Transmit Buffer for the specified socket.
+ * The caller is responsible for determining the address
+ * and number of bytes to write.
+ */
 INLINE void W5500_WriteSnTXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
         uint16_t len)
 {
     W5500_WriteBuf(W5500_CB_SnTX(s), addr, buf, len);
 }
+/**
+ * Reads from the Receive Buffer for the specified socket.
+ * The caller is responsible for determining the address
+ * and number of bytes to read.
+ */
 INLINE void W5500_ReadSnRXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
         uint16_t len)
 {
     W5500_ReadBuf(W5500_CB_SnRX(s), addr, buf, len);
 }
+/**
+ * Reads from the Transmit Buffer for the specified socket.
+ * The caller is responsible for determining the address
+ * and number of bytes to read.
+ */
+
 INLINE void W5500_ReadSnTXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
         uint16_t len)
 {
     W5500_ReadBuf(W5500_CB_SnTX(s), addr, buf, len);
 }
 
-/* Common Register Write Methods */
+/**
+ * Common Register Write Methods
+ */
+
+/* Writes the common Mode Reg register */
 INLINE void W5500_WriteMR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_MR, val);
 }
+/* Writes the common Gateway Addr register */
 INLINE void W5500_WriteGAR(uint8_t *ptr)
 {
     W5500_WriteBuf(W5500_CB_REG, W5500_REG_GAR, ptr, 4);
 }
+/* Writes the common Subnet Mask Addr register */
 INLINE void W5500_WriteSUBR(uint8_t *ptr)
 {
     W5500_WriteBuf(W5500_CB_REG, W5500_REG_SUBR, ptr, 4);
 }
+/* Writes the common Source Hardware Addr register */
 INLINE void W5500_WriteSHAR(uint8_t *ptr)
 {
     W5500_WriteBuf(W5500_CB_REG, W5500_REG_SHAR, ptr, 6);
 }
+/* Writes the common Source IP Addr register */
 INLINE void W5500_WriteSIPR(uint8_t *ptr)
 {
     W5500_WriteBuf(W5500_CB_REG, W5500_REG_SIPR, ptr, 4);
 }
+/* Writes the common Interrupt Low Level Timer register */
 INLINE void W5500_WriteINTLEVEL(uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_REG, W5500_REG_INTLEVEL, val);
 }
+/* Writes the common Interrupt Reg register */
 INLINE void W5500_WriteIR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_IR, val);
 }
+/* Writes the common Interupt Mask register */
 INLINE void W5500_WriteIMR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_IMR, val);
 }
+/* Writes the common Socket Interrupt register */
 INLINE void W5500_WriteSIR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_SIR, val);
 }
+/* Writes the common Socket Interrupt Mask register */
 INLINE void W5500_WriteSIMR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_SIMR, val);
 }
+/* Writes the common Retry Time register */
 INLINE void W5500_WriteRTR(uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_REG, W5500_REG_RTR, val);
 }
+/* Writes the common Retry Count register */
 INLINE void W5500_WriteRCR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_RCR, val);
 }
+
+/* Writes the common Unreachable IP Addr register */
 INLINE void W5500_WriteUIPR(uint8_t *ptr)
 {
     W5500_WriteBuf(W5500_CB_REG, W5500_REG_UIPR, ptr, 4);
 }
+/* Writes the common Unreachable Port register */
 INLINE void W5500_WriteUPORTR(uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_REG, W5500_REG_UPORTR, val);
 }
+/* Writes the common Phy Config register */
 INLINE void W5500_WritePHYCFGR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_PHYCFGR, val);
 }
+/* Writes the common Chip Version register */
 INLINE void W5500_WriteVERSIONR(uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_REG, W5500_REG_VERSIONR, val);
 }
 
-/* Socket N Register Write Methods */
+/**
+ * Socket N Register Write Methods
+ */
+
+/* Writes the Mode Reg register for the specified socket */
 INLINE void W5500_WriteSnMR(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnMR, val);
 }
+/* Writes the Command Reg register for the specified socket */
 INLINE void W5500_WriteSnCR(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnCR, val);
 }
+/* Writes the Interrupt Reg register for the specified socket */
 INLINE void W5500_WriteSnIR(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnIR, val);
 }
+/* Writes the Status Reg register for the specified socket */
 INLINE void W5500_WriteSnSR(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnSR, val);
 }
+/* Writes the Source Port register for the specified socket */
 INLINE void W5500_WriteSnPORT(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnPORT, val);
 }
+/* Writes the Dest Hardware Addr register for the specified socket */
 INLINE void W5500_WriteSnDHAR(uint8_t s, uint8_t *ptr)
 {
     W5500_WriteBuf(W5500_CB_SnREG(s), W5500_REG_SnDHAR, ptr, 6);
 }
+/* Writes the Dest IP Addr register for the specified socket */
 INLINE void W5500_WriteSnDIPR(uint8_t s, uint8_t *ptr)
 {
     W5500_WriteBuf(W5500_CB_SnREG(s), W5500_REG_SnDIPR, ptr, 4);
 }
+/* Writes the Dest Port register for the specified socket */
 INLINE void W5500_WriteSnDPORT(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnDPORT, val);
 }
+/* Writes the Max Segment Size register for the specified socket */
 INLINE void W5500_WriteSnMSSR(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnMSSR, val);
 }
+/* Writes the IP TOS register for the specified socket */
 INLINE void W5500_WriteSnTOS(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnTOS, val);
 }
+/* Writes the IP TTL register for the specified socket */
 INLINE void W5500_WriteSnTTL(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnTTL, val);
 }
+/* Writes the Rx Buffer Size register for the specified socket */
 INLINE void W5500_WriteSnRXBUF_SIZE(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnRXBUF_SIZE, val);
 }
+/* Writes the Tx Buffer Size register for the specified socket */
 INLINE void W5500_WriteSnTXBUF_SIZE(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnTXBUF_SIZE, val);
 }
+/* Writes the Tx Free Size register for the specified socket */
 INLINE void W5500_WriteSnTX_FSR(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_FSR, val);
 }
+/* Writes the Tx Read Pointer register for the specified socket */
 INLINE void W5500_WriteSnTX_RD(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_RD, val);
 }
+/* Writes the Tx Write Pointer register for the specified socket */
 INLINE void W5500_WriteSnTX_WR(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_WR, val);
 }
+/* Writes the Rx Received Size register for the specified socket */
 INLINE void W5500_WriteSnRX_RSR(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RSR, val);
 }
+/* Writes the Rx Read Pointer register for the specified socket */
 INLINE void W5500_WriteSnRX_RD(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RD, val);
 }
+/* Writes the Rx Write Pointer register for the specified socket */
 INLINE void W5500_WriteSnRX_WR(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_WR, val);
 }
+/* Writes the Interrupt Mask register for the specified socket */
 INLINE void W5500_WriteSnIMR(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnIMR, val);
 }
+/* Writes the Fragment Offset in IP Header register for the specified socket */
 INLINE void W5500_WriteSnFEAG(uint8_t s, uint16_t val)
 {
     W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnFEAG, val);
 }
+/* Writes the Keep Alive Timer register for the specified socket */
 INLINE void W5500_WriteSnKPALVTR(uint8_t s, uint8_t val)
 {
     W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnKPALVTR, val);
 }
 
-/* Common Register Read Methods */
+/**
+ * Common Register Read Methods
+ */
+
+/* Reads the common Mode Reg register */
 INLINE uint8_t W5500_ReadMR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_MR);
 }
+/* Reads the common Gateway Addr register */
 INLINE void W5500_ReadGAR(uint8_t *ptr)
 {
     W5500_ReadBuf(W5500_CB_REG, W5500_REG_GAR, ptr, 4);
 }
+/* Reads the common Subnet Mask Addr register */
 INLINE void W5500_ReadSUBR(uint8_t *ptr)
 {
     W5500_ReadBuf(W5500_CB_REG, W5500_REG_SUBR, ptr, 4);
 }
+/* Reads the common Source Hardware Addr register */
 INLINE void W5500_ReadSHAR(uint8_t *ptr)
 {
     W5500_ReadBuf(W5500_CB_REG, W5500_REG_SHAR, ptr, 6);
 }
+/* Reads the common Source IP Addr register */
 INLINE void W5500_ReadSIPR(uint8_t *ptr)
 {
     W5500_ReadBuf(W5500_CB_REG, W5500_REG_SIPR, ptr, 4);
 }
+/* Reads the common Interrupt Low Level Timer register */
 INLINE uint16_t W5500_ReadINTLEVEL(uint16_t val)
 {
     return W5500_ReadReg16(W5500_CB_REG, W5500_REG_INTLEVEL);
 }
+/* Reads the common Interrupt Reg register */
 INLINE uint8_t W5500_ReadIR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_IR);
 }
+/* Reads the common Interupt Mask register */
 INLINE uint8_t W5500_ReadIMR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_IMR);
 }
+/* Reads the common Socket Interrupt register */
 INLINE uint8_t W5500_ReadSIR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_SIR);
 }
+/* Reads the common Socket Interrupt Mask register */
 INLINE uint8_t W5500_ReadSIMR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_SIMR);
 }
+/* Reads the common Retry Time register */
 INLINE uint16_t W5500_ReadRTR(uint16_t val)
 {
     return W5500_ReadReg16(W5500_CB_REG, W5500_REG_RTR);
 }
+/* Reads the common Retry Count register */
 INLINE uint8_t W5500_ReadRCR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_RCR);
 }
+
+/* Reads the common Unreachable IP Addr register */
 INLINE void W5500_ReadUIPR(uint8_t *ptr)
 {
     W5500_ReadBuf(W5500_CB_REG, W5500_REG_UIPR, ptr, 4);
 }
+/* Reads the common Unreachable Port register */
 INLINE uint16_t W5500_ReadUPORTR(uint16_t val)
 {
     return W5500_ReadReg16(W5500_CB_REG, W5500_REG_UPORTR);
 }
+/* Reads the common Phy Config register */
 INLINE uint8_t W5500_ReadPHYCFGR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_PHYCFGR);
 }
+/* Reads the common Chip Version register */
 INLINE uint8_t W5500_ReadVERSIONR(uint8_t val)
 {
     return W5500_ReadReg8(W5500_CB_REG, W5500_REG_VERSIONR);
 }
 
-/* Socket N Register Read Methods */
+/**
+ * Socket N Register Read Methods
+ */
+
+/* Reads the Mode Reg register for the specified socket */
 INLINE uint8_t W5500_ReadSnMR(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnMR);
 }
+/* Reads the Command Reg register for the specified socket */
 INLINE uint8_t W5500_ReadSnCR(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnCR);
 }
+/* Reads the Interrupt Reg register for the specified socket */
 INLINE uint8_t W5500_ReadSnIR(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnIR);
 }
+/* Reads the Status Reg register for the specified socket */
 INLINE uint8_t W5500_ReadSnSR(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnSR);
 }
+/* Reads the Source Port register for the specified socket */
 INLINE uint16_t W5500_ReadSnPORT(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnPORT);
 }
+/* Reads the Dest Hardware Addr register for the specified socket */
 INLINE void W5500_ReadSnDHAR(uint8_t s, uint8_t *ptr)
 {
     W5500_ReadBuf(W5500_CB_SnREG(s), W5500_REG_SnDHAR, ptr, 6);
 }
+/* Reads the Dest IP Addr register for the specified socket */
 INLINE void W5500_ReadSnDIPR(uint8_t s, uint8_t *ptr)
 {
     W5500_ReadBuf(W5500_CB_SnREG(s), W5500_REG_SnDIPR, ptr, 4);
 }
+/* Reads the Dest Port register for the specified socket */
 INLINE uint16_t W5500_ReadSnDPORT(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnDPORT);
 }
+/* Reads the Max Segment Size register for the specified socket */
 INLINE uint16_t W5500_ReadSnMSSR(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnMSSR);
 }
+/* Reads the IP TOS register for the specified socket */
 INLINE uint8_t W5500_ReadSnTOS(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTOS);
 }
+/* Reads the IP TTL register for the specified socket */
 INLINE uint8_t W5500_ReadSnTTL(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTTL);
 }
+/* Reads the Rx Buffer Size register for the specified socket */
 INLINE uint8_t W5500_ReadSnRXBUF_SIZE(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnRXBUF_SIZE);
 }
+/* Reads the Tx Buffer Size register for the specified socket */
 INLINE uint8_t W5500_ReadSnTXBUF_SIZE(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTXBUF_SIZE);
 }
+/* Reads the Tx Free Size register for the specified socket */
 INLINE uint16_t W5500_ReadSnTX_FSR(uint8_t s)
 {
     return W5500_ReadReg16Val(W5500_CB_SnREG(s), W5500_REG_SnTX_FSR);
 }
+/* Reads the Tx Read Pointer register for the specified socket */
 INLINE uint16_t W5500_ReadSnTX_RD(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_RD);
 }
+/* Reads the Tx Write Pointer register for the specified socket */
 INLINE uint16_t W5500_ReadSnTX_WR(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_WR);
 }
+/* Reads the Rx Received Size register for the specified socket */
 INLINE uint16_t W5500_ReadSnRX_RSR(uint8_t s)
 {
     return W5500_ReadReg16Val(W5500_CB_SnREG(s), W5500_REG_SnRX_RSR);
 }
+/* Reads the Rx Read Pointer register for the specified socket */
 INLINE uint16_t W5500_ReadSnRX_RD(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RD);
 }
+/* Reads the Rx Write Pointer register for the specified socket */
 INLINE uint16_t W5500_ReadSnRX_WR(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_WR);
 }
+/* Reads the Interrupt Mask register for the specified socket */
 INLINE uint8_t W5500_ReadSnIMR(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnIMR);
 }
+/* Reads the Fragment Offset in IP Header register for the specified socket */
 INLINE uint16_t W5500_ReadSnFEAG(uint8_t s)
 {
     return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnFEAG);
 }
+/* Reads the Keep Alive Timer register for the specified socket */
 INLINE uint8_t W5500_ReadSnKPALVTR(uint8_t s)
 {
     return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnKPALVTR);
 }
-
 
 #endif /* W5500_H */
