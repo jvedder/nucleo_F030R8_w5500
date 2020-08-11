@@ -121,109 +121,6 @@
 #define W5500_CB_WRITE                  0x04                /* Control Byte Write Mask */
 
 
-/* Receive and Transmit Buffer Write and Read Methods */
-void W5500_WriteSnRXBuf(uint8_t s, uint16_t addr, uint8_t *buf, uint16_t len) __attribute__((always_inline));
-void W5500_WriteSnTXBuf(uint8_t s, uint16_t addr, uint8_t *buf, uint16_t len) __attribute__((always_inline));
-void W5500_ReadSnRXBuf(uint8_t s, uint16_t addr, uint8_t *buf, uint16_t len) __attribute__((always_inline));
-void W5500_ReadSnTXBuf(uint8_t s, uint16_t addr, uint8_t *buf, uint16_t len) __attribute__((always_inline));
-
-
-/* Common Register Write Methods */
-void W5500_WriteMR(uint8_t val) __attribute__((always_inline));
-void W5500_WriteGAR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_WriteSUBR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_WriteSHAR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_WriteSIPR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_WriteINTLEVEL(uint16_t val) __attribute__((always_inline));
-void W5500_WriteIR(uint8_t val) __attribute__((always_inline));
-void W5500_WriteIMR(uint8_t val) __attribute__((always_inline));
-void W5500_WriteSIR(uint8_t val) __attribute__((always_inline));
-void W5500_WriteSIMR(uint8_t val) __attribute__((always_inline));
-void W5500_WriteRTR(uint16_t val) __attribute__((always_inline));
-void W5500_WriteRCR(uint8_t val) __attribute__((always_inline));
-void W5500_WritePRIMER(uint8_t val) __attribute__((always_inline));
-void W5500_WritePMAGIC(uint8_t val) __attribute__((always_inline));
-void W5500_WritePHAR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_WritePSID(uint16_t val) __attribute__((always_inline));
-void W5500_WritePMRU(uint16_t val) __attribute__((always_inline));
-void W5500_WriteUIPR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_WriteUPORTR(uint16_t val) __attribute__((always_inline));
-void W5500_WritePHYCFGR(uint8_t val) __attribute__((always_inline));
-void W5500_WriteVERSIONR(uint8_t val) __attribute__((always_inline));
-
-/* Socket N Register Write Methods */
-void W5500_WriteSnMR(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnCR(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnIR(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnSR(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnPORT(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnDHAR(uint8_t s,uint8_t *ptr) __attribute__((always_inline));
-void W5500_WriteSnDIPR(uint8_t s,uint8_t *ptr) __attribute__((always_inline));
-void W5500_WriteSnDPORT(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnMSSR(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnTOS(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnTTL(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnRXBUF_SIZE(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnTXBUF_SIZE(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnTX_FSR(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnTX_RD(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnTX_WR(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnRX_RSR(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnRX_RD(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnRX_WR(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnIMR(uint8_t s,uint8_t val) __attribute__((always_inline));
-void W5500_WriteSnFEAG(uint8_t s,uint16_t val) __attribute__((always_inline));
-void W5500_WriteSnKPALVTR(uint8_t s,uint8_t val) __attribute__((always_inline));
-
-
-/* Common Register Read Methods */
-uint8_t W5500_ReadMR(uint8_t val) __attribute__((always_inline));
-void W5500_ReadGAR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_ReadSUBR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_ReadSHAR(uint8_t *ptr) __attribute__((always_inline));
-void W5500_ReadSIPR(uint8_t *ptr) __attribute__((always_inline));
-uint16_t W5500_ReadINTLEVEL(uint16_t val) __attribute__((always_inline));
-uint8_t W5500_ReadIR(uint8_t val) __attribute__((always_inline));
-uint8_t W5500_ReadIMR(uint8_t val) __attribute__((always_inline));
-uint8_t W5500_ReadSIR(uint8_t val) __attribute__((always_inline));
-uint8_t W5500_ReadSIMR(uint8_t val) __attribute__((always_inline));
-uint16_t W5500_ReadRTR(uint16_t val) __attribute__((always_inline));
-uint8_t W5500_ReadRCR(uint8_t val) __attribute__((always_inline));
-uint8_t W5500_ReadPRIMER(uint8_t val) __attribute__((always_inline));
-uint8_t W5500_ReadPMAGIC(uint8_t val) __attribute__((always_inline));
-void W5500_ReadPHAR(uint8_t *ptr) __attribute__((always_inline));
-uint16_t W5500_ReadPSID(uint16_t val) __attribute__((always_inline));
-uint16_t W5500_ReadPMRU(uint16_t val) __attribute__((always_inline));
-void W5500_ReadUIPR(uint8_t *ptr) __attribute__((always_inline));
-uint16_t W5500_ReadUPORTR(uint16_t val) __attribute__((always_inline));
-uint8_t W5500_ReadPHYCFGR(uint8_t val) __attribute__((always_inline));
-uint8_t W5500_ReadVERSIONR(uint8_t val) __attribute__((always_inline));
-
-/* Socket N Register Read Methods */
-uint8_t W5500_ReadSnMR(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnCR(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnIR(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnSR(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnPORT(uint8_t s) __attribute__((always_inline));
-void W5500_ReadSnDHAR(uint8_t s, uint8_t *ptr) __attribute__((always_inline));
-void W5500_ReadSnDIPR(uint8_t s, uint8_t *ptr) __attribute__((always_inline));
-uint16_t W5500_ReadSnDPORT(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnMSSR(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnTOS(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnTTL(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnRXBUF_SIZE(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnTXBUF_SIZE(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnTX_FSR(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnTX_RD(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnTX_WR(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnRX_RSR(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnRX_RD(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnRX_WR(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnIMR(uint8_t s) __attribute__((always_inline));
-uint16_t W5500_ReadSnFEAG(uint8_t s) __attribute__((always_inline));
-uint8_t W5500_ReadSnKPALVTR(uint8_t s) __attribute__((always_inline));
-
-
 /* Long Name convenience macros  */
 #define W5500_setGatewayIp(ptr)             W5500_SetGAR(ptr)
 #define W5500_getGatewayIp(ptr)             W5500_GetGAR(ptr)
@@ -262,7 +159,7 @@ uint8_t W5500_ReadSnKPALVTR(uint8_t s) __attribute__((always_inline));
 
 /* Common Phy Configuration Register (PHYCFGR) Values */
 #define W5500_PHYCFGR_RST                   ~(1<<7)  //< For PHY reset, must operate AND mask.
-#define W5500_PHYCFGR_OPMD                  (1<<6)   // Configre PHY with OPMDC value
+#define W5500_PHYCFGR_OPMD                  (1<<6)   // Configure PHY with OPMDC value
 #define W5500_PHYCFGR_OPMDC_ALLA            (7<<3)
 #define W5500_PHYCFGR_OPMDC_PDOWN           (6<<3)
 #define W5500_PHYCFGR_OPMDC_NA              (5<<3)
@@ -341,11 +238,6 @@ uint8_t W5500_ReadSnKPALVTR(uint8_t s) __attribute__((always_inline));
 #define IPPROTO_RAW                         255      //< Raw IP packet
 
 
-/* Critical Code Section Markers -- update if using threads to protect SPI transmissions */
-#define W5500_CRITICAL_ENTER()
-#define W5500_CRITICAL_EXIT()
-
-
 /**
  *  Public Function Prototypes
  */
@@ -361,5 +253,350 @@ void W5500_ReadBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len);
 void W5500_WriteTxBuffer(uint8_t sn, uint8_t *buf, uint16_t len);
 void W5500_ReadRXBuffer(uint8_t sn, uint8_t *buf, uint16_t len);
 void W5500_ExecuteSnCmd(uint8_t sn, uint8_t cmd);
+
+
+/**
+ *  Public Inline Function Definitions (instead of macros).
+ *
+ *  @See: https://gcc.gnu.org/onlinedocs/gcc/Inline.html
+ */
+
+/* TODO: does this need a namespace prefix? */
+#define INLINE   __attribute__((always_inline)) static inline
+
+/* Receive and Transmit Buffer Write and Read Methods */
+INLINE void W5500_WriteSnRXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
+        uint16_t len)
+{
+    W5500_WriteBuf(W5500_CB_SnRX(s), addr, buf, len);
+}
+INLINE void W5500_WriteSnTXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
+        uint16_t len)
+{
+    W5500_WriteBuf(W5500_CB_SnTX(s), addr, buf, len);
+}
+INLINE void W5500_ReadSnRXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
+        uint16_t len)
+{
+    W5500_ReadBuf(W5500_CB_SnRX(s), addr, buf, len);
+}
+INLINE void W5500_ReadSnTXBuf(uint8_t s, uint16_t addr, uint8_t *buf,
+        uint16_t len)
+{
+    W5500_ReadBuf(W5500_CB_SnTX(s), addr, buf, len);
+}
+
+/* Common Register Write Methods */
+INLINE void W5500_WriteMR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_MR, val);
+}
+INLINE void W5500_WriteGAR(uint8_t *ptr)
+{
+    W5500_WriteBuf(W5500_CB_REG, W5500_REG_GAR, ptr, 4);
+}
+INLINE void W5500_WriteSUBR(uint8_t *ptr)
+{
+    W5500_WriteBuf(W5500_CB_REG, W5500_REG_SUBR, ptr, 4);
+}
+INLINE void W5500_WriteSHAR(uint8_t *ptr)
+{
+    W5500_WriteBuf(W5500_CB_REG, W5500_REG_SHAR, ptr, 6);
+}
+INLINE void W5500_WriteSIPR(uint8_t *ptr)
+{
+    W5500_WriteBuf(W5500_CB_REG, W5500_REG_SIPR, ptr, 4);
+}
+INLINE void W5500_WriteINTLEVEL(uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_REG, W5500_REG_INTLEVEL, val);
+}
+INLINE void W5500_WriteIR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_IR, val);
+}
+INLINE void W5500_WriteIMR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_IMR, val);
+}
+INLINE void W5500_WriteSIR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_SIR, val);
+}
+INLINE void W5500_WriteSIMR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_SIMR, val);
+}
+INLINE void W5500_WriteRTR(uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_REG, W5500_REG_RTR, val);
+}
+INLINE void W5500_WriteRCR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_RCR, val);
+}
+INLINE void W5500_WriteUIPR(uint8_t *ptr)
+{
+    W5500_WriteBuf(W5500_CB_REG, W5500_REG_UIPR, ptr, 4);
+}
+INLINE void W5500_WriteUPORTR(uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_REG, W5500_REG_UPORTR, val);
+}
+INLINE void W5500_WritePHYCFGR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_PHYCFGR, val);
+}
+INLINE void W5500_WriteVERSIONR(uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_REG, W5500_REG_VERSIONR, val);
+}
+
+/* Socket N Register Write Methods */
+INLINE void W5500_WriteSnMR(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnMR, val);
+}
+INLINE void W5500_WriteSnCR(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnCR, val);
+}
+INLINE void W5500_WriteSnIR(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnIR, val);
+}
+INLINE void W5500_WriteSnSR(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnSR, val);
+}
+INLINE void W5500_WriteSnPORT(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnPORT, val);
+}
+INLINE void W5500_WriteSnDHAR(uint8_t s, uint8_t *ptr)
+{
+    W5500_WriteBuf(W5500_CB_SnREG(s), W5500_REG_SnDHAR, ptr, 6);
+}
+INLINE void W5500_WriteSnDIPR(uint8_t s, uint8_t *ptr)
+{
+    W5500_WriteBuf(W5500_CB_SnREG(s), W5500_REG_SnDIPR, ptr, 4);
+}
+INLINE void W5500_WriteSnDPORT(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnDPORT, val);
+}
+INLINE void W5500_WriteSnMSSR(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnMSSR, val);
+}
+INLINE void W5500_WriteSnTOS(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnTOS, val);
+}
+INLINE void W5500_WriteSnTTL(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnTTL, val);
+}
+INLINE void W5500_WriteSnRXBUF_SIZE(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnRXBUF_SIZE, val);
+}
+INLINE void W5500_WriteSnTXBUF_SIZE(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnTXBUF_SIZE, val);
+}
+INLINE void W5500_WriteSnTX_FSR(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_FSR, val);
+}
+INLINE void W5500_WriteSnTX_RD(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_RD, val);
+}
+INLINE void W5500_WriteSnTX_WR(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_WR, val);
+}
+INLINE void W5500_WriteSnRX_RSR(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RSR, val);
+}
+INLINE void W5500_WriteSnRX_RD(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RD, val);
+}
+INLINE void W5500_WriteSnRX_WR(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_WR, val);
+}
+INLINE void W5500_WriteSnIMR(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnIMR, val);
+}
+INLINE void W5500_WriteSnFEAG(uint8_t s, uint16_t val)
+{
+    W5500_WriteReg16(W5500_CB_SnREG(s), W5500_REG_SnFEAG, val);
+}
+INLINE void W5500_WriteSnKPALVTR(uint8_t s, uint8_t val)
+{
+    W5500_WriteReg8(W5500_CB_SnREG(s), W5500_REG_SnKPALVTR, val);
+}
+
+/* Common Register Read Methods */
+INLINE uint8_t W5500_ReadMR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_MR);
+}
+INLINE void W5500_ReadGAR(uint8_t *ptr)
+{
+    W5500_ReadBuf(W5500_CB_REG, W5500_REG_GAR, ptr, 4);
+}
+INLINE void W5500_ReadSUBR(uint8_t *ptr)
+{
+    W5500_ReadBuf(W5500_CB_REG, W5500_REG_SUBR, ptr, 4);
+}
+INLINE void W5500_ReadSHAR(uint8_t *ptr)
+{
+    W5500_ReadBuf(W5500_CB_REG, W5500_REG_SHAR, ptr, 6);
+}
+INLINE void W5500_ReadSIPR(uint8_t *ptr)
+{
+    W5500_ReadBuf(W5500_CB_REG, W5500_REG_SIPR, ptr, 4);
+}
+INLINE uint16_t W5500_ReadINTLEVEL(uint16_t val)
+{
+    return W5500_ReadReg16(W5500_CB_REG, W5500_REG_INTLEVEL);
+}
+INLINE uint8_t W5500_ReadIR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_IR);
+}
+INLINE uint8_t W5500_ReadIMR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_IMR);
+}
+INLINE uint8_t W5500_ReadSIR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_SIR);
+}
+INLINE uint8_t W5500_ReadSIMR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_SIMR);
+}
+INLINE uint16_t W5500_ReadRTR(uint16_t val)
+{
+    return W5500_ReadReg16(W5500_CB_REG, W5500_REG_RTR);
+}
+INLINE uint8_t W5500_ReadRCR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_RCR);
+}
+INLINE void W5500_ReadUIPR(uint8_t *ptr)
+{
+    W5500_ReadBuf(W5500_CB_REG, W5500_REG_UIPR, ptr, 4);
+}
+INLINE uint16_t W5500_ReadUPORTR(uint16_t val)
+{
+    return W5500_ReadReg16(W5500_CB_REG, W5500_REG_UPORTR);
+}
+INLINE uint8_t W5500_ReadPHYCFGR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_PHYCFGR);
+}
+INLINE uint8_t W5500_ReadVERSIONR(uint8_t val)
+{
+    return W5500_ReadReg8(W5500_CB_REG, W5500_REG_VERSIONR);
+}
+
+/* Socket N Register Read Methods */
+INLINE uint8_t W5500_ReadSnMR(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnMR);
+}
+INLINE uint8_t W5500_ReadSnCR(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnCR);
+}
+INLINE uint8_t W5500_ReadSnIR(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnIR);
+}
+INLINE uint8_t W5500_ReadSnSR(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnSR);
+}
+INLINE uint16_t W5500_ReadSnPORT(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnPORT);
+}
+INLINE void W5500_ReadSnDHAR(uint8_t s, uint8_t *ptr)
+{
+    W5500_ReadBuf(W5500_CB_SnREG(s), W5500_REG_SnDHAR, ptr, 6);
+}
+INLINE void W5500_ReadSnDIPR(uint8_t s, uint8_t *ptr)
+{
+    W5500_ReadBuf(W5500_CB_SnREG(s), W5500_REG_SnDIPR, ptr, 4);
+}
+INLINE uint16_t W5500_ReadSnDPORT(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnDPORT);
+}
+INLINE uint16_t W5500_ReadSnMSSR(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnMSSR);
+}
+INLINE uint8_t W5500_ReadSnTOS(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTOS);
+}
+INLINE uint8_t W5500_ReadSnTTL(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTTL);
+}
+INLINE uint8_t W5500_ReadSnRXBUF_SIZE(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnRXBUF_SIZE);
+}
+INLINE uint8_t W5500_ReadSnTXBUF_SIZE(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnTXBUF_SIZE);
+}
+INLINE uint16_t W5500_ReadSnTX_FSR(uint8_t s)
+{
+    return W5500_ReadReg16Val(W5500_CB_SnREG(s), W5500_REG_SnTX_FSR);
+}
+INLINE uint16_t W5500_ReadSnTX_RD(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_RD);
+}
+INLINE uint16_t W5500_ReadSnTX_WR(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnTX_WR);
+}
+INLINE uint16_t W5500_ReadSnRX_RSR(uint8_t s)
+{
+    return W5500_ReadReg16Val(W5500_CB_SnREG(s), W5500_REG_SnRX_RSR);
+}
+INLINE uint16_t W5500_ReadSnRX_RD(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_RD);
+}
+INLINE uint16_t W5500_ReadSnRX_WR(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnRX_WR);
+}
+INLINE uint8_t W5500_ReadSnIMR(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnIMR);
+}
+INLINE uint16_t W5500_ReadSnFEAG(uint8_t s)
+{
+    return W5500_ReadReg16(W5500_CB_SnREG(s), W5500_REG_SnFEAG);
+}
+INLINE uint8_t W5500_ReadSnKPALVTR(uint8_t s)
+{
+    return W5500_ReadReg8(W5500_CB_SnREG(s), W5500_REG_SnKPALVTR);
+}
+
 
 #endif /* W5500_H */
