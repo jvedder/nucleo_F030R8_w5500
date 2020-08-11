@@ -43,11 +43,6 @@
 /**
  *  Private Function Prototypes
  */
-static uint8_t SOCK_SnCommand(uint8_t s, uint8_t cmd);
-#if 0
-static void SOCK_write_TX_data(uint8_t sn, uint8_t *buf, uint16_t len);
-static void SOCK_read_RX_data(uint8_t sn, uint8_t *buf, uint16_t len);
-#endif
 
 
 /**
@@ -84,7 +79,8 @@ uint8_t SOCK_socket(uint8_t sn, uint8_t protocol, uint16_t port, uint8_t flag)
     W5500_WriteSnPORT(sn, port);
 
     /* open the socket */
-    return SOCK_SnCommand(sn, W5500_SnCR_OPEN);
+    W5500_ExecuteSnCmd(sn, W5500_SnCR_OPEN);
+    return SOCK_OK;
 }
 
 /**
@@ -99,7 +95,7 @@ uint8_t SOCK_close(uint8_t sn)
     if (sn > 7) return SOCK_ERR;
 
     /* issue socket close command */
-    SOCK_SnCommand(sn, W5500_SnCR_CLOSE);
+    W5500_ExecuteSnCmd(sn, W5500_SnCR_CLOSE);
 
     /* clear all interrupts of the socket. */
     W5500_WriteSnIR(sn, 0xFF);
@@ -129,7 +125,7 @@ uint8_t SOCK_listen(uint8_t sn)
     if ((W5500_ReadSnSR(sn) != W5500_SnSR_INIT)) return SOCK_ERR;
 
     /* set the socket to listen mode */
-    SOCK_SnCommand(sn, W5500_SnCR_LISTEN);
+    W5500_ExecuteSnCmd(sn, W5500_SnCR_LISTEN);
 
     /* confirm that the socket is listening */
     if (W5500_ReadSnSR(sn) != W5500_SnCR_LISTEN)
@@ -185,7 +181,7 @@ uint8_t SOCK_connect(uint8_t sn, uint8_t *addr, uint16_t port)
     W5500_WriteSnDPORT(sn, port);
 
     /* Do connection */
-    SOCK_SnCommand(sn, W5500_SnCR_CONNECT);
+    W5500_ExecuteSnCmd(sn, W5500_SnCR_CONNECT);
 
     /* Wait until connection is established */
     while (W5500_ReadSnSR(sn) != W5500_SnSR_ESTABLISHED)
@@ -226,7 +222,7 @@ uint8_t SOCK_disconnect(uint8_t sn)
     }
 
     /* do disconnect */
-    SOCK_SnCommand(sn, W5500_SnCR_DISCON);
+    W5500_ExecuteSnCmd(sn, W5500_SnCR_DISCON);
 
     /* wait for the socket to close */
     while (W5500_ReadSnSR(sn) != W5500_SnSR_CLOSED)
@@ -284,7 +280,7 @@ uint16_t SOCK_send(uint8_t sn, uint8_t *buf, uint16_t len)
     }
     /* TODO: possibly inline SOCK_send_TX_data() */
     W5500_WriteTxBuffer(sn, buf, len);
-    SOCK_SnCommand(sn, W5500_SnCR_SEND);
+    W5500_ExecuteSnCmd(sn, W5500_SnCR_SEND);
 
     return len;
 }
@@ -331,106 +327,7 @@ uint16_t SOCK_recv(uint8_t sn, uint8_t *buf, uint16_t len)
 
     if (recvsize < len) len = recvsize;
     W5500_ReadRXBuffer(sn, buf, len);
-    SOCK_SnCommand(sn, W5500_SnCR_RECV);
+    W5500_ExecuteSnCmd(sn, W5500_SnCR_RECV);
 
     return len;
 }
-
-/**
- * @brief A convenience method to issue the specified command on
- * the specified socket and wait for the W5500 to accept it.
- *
- * @param  sn: The socket number.
- * @param  cmd: The command to execute.
- * @retval Error status
- *
- * TODO: Add a timeout on the wait for completion.
- *
- */
-static uint8_t SOCK_SnCommand(uint8_t sn, uint8_t cmd)
-{
-    /* Send command to socket command register */
-    W5500_WriteSnCR(sn, cmd);
-
-    /*  Wait for command to be accepted */
-    while (W5500_ReadSnCR(sn))
-    {
-        /* spin wait */
-        /* TODO: add timeout */
-    }
-    return SOCK_OK;
-}
-
-#if 0
-/**
- * @brief  Utility function to send data to the W5500 Tx Buffer based on the Socket's Tx_WR register.
- * Also supports the case of data that wraps around past the end of the Tx buffer.
- */
-static void SOCK_write_TX_data(uint8_t sn, uint8_t *buf, uint16_t len)
-{
-    uint16_t tx_ptr;
-    uint16_t buf_ptr;
-
-    /* get the transmit pointer */
-    tx_ptr = W5500_ReadSnTX_WR(sn);
-
-    /* mask it to be within the physical Tx buffer */
-    buf_ptr = tx_ptr & W5500_TXBUF_MASK;
-
-    /* If this data extends past the end of the TX buffer, it has
-     * to wrap around to the beginning of the TX buffer. */
-    if ((buf_ptr + len) > W5500_TXBUF_SIZE)
-    {
-        /* compute the size that fits to the end of TX buffer */
-        uint16_t size = W5500_TXBUF_SIZE - buf_ptr;
-        W5500_WriteSnTXBuf(sn, buf_ptr, buf, size);
-
-        /* what's left goes in the beginning of the TX buffer */
-        W5500_WriteSnTXBuf(sn, 0, (buf + size), (len - size));
-    }
-    else
-    {
-        /* does not wrap around end of Tx buffer */
-        W5500_WriteSnTXBuf(sn, buf_ptr, buf, len);
-    }
-
-    /* indicate how much we have written into the Tx buffer */
-    W5500_WriteSnTX_WR(sn, tx_ptr + len);
-}
-
-/**
- * @brief  Utility function to read data from the W5500 Rx Buffer based on the Socket's Rx_RD register.
- * Also supports the case of data that wraps around past the end of the Rx buffer.
- */
-static void SOCK_read_RX_data(uint8_t sn, uint8_t *buf, uint16_t len)
-{
-    uint16_t rx_ptr;
-    uint16_t buf_ptr;
-
-    /* get the receive pointer */
-    rx_ptr = W5500_ReadSnRX_RD(sn);
-
-    /* mask it to be within the physical Rx buffer */
-    buf_ptr = rx_ptr & W5500_RXBUF_MASK;
-
-    /* If this data extends past the end of the Rx buffer, it is
-     * wrapped around to the beginning of the Rx buffer. */
-    if ((buf_ptr + len) > W5500_RXBUF_SIZE)
-    {
-        /* compute the size that fits to the end of Rx buffer */
-        uint16_t size = W5500_RXBUF_SIZE - buf_ptr;
-        W5500_ReadSnRXBuf(sn, buf_ptr, buf, size);
-
-        /* what's left is at the beginning of he Rx buffer */
-        W5500_ReadSnRXBuf(sn, 0, (buf + size), (len - size));
-    }
-    else
-    {
-        /* does not wrap around end of Rx buffer */
-        W5500_ReadSnRXBuf(sn, buf_ptr, buf, len);
-    }
-
-    /* indicate how much we have read from the Rx buffer*/
-    W5500_WriteSnRX_RD(sn, rx_ptr + len);
-}
-#endif
