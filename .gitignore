@@ -10,3 +10,6 @@ CubeMX/
 
 # ignore worksheet lock files
 .~lock.*
+
+# do not include key material
+api_key.h

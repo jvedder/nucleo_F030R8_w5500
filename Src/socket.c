@@ -1,8 +1,8 @@
 /**
  ******************************************************************************
- * @file           : socket.h
- * @brief          : This file contains socket layer on top of the
- *                   Wiznet W5500 chip
+ * @file:   socket.c
+ * @author: John Vedder
+ * @brief:  Socket layer on top of the Wiznet W5500 chip driver
  ******************************************************************************
  */
 
@@ -33,17 +33,21 @@
  ******************************************************************************
  */
 
-
 /**
  *  Include files
  */
 #include "w5500.h"
 #include "socket.h"
+#include <stdio.h>
 
 /**
- *  Private Function Prototypes
+ *  Private defines
  */
+#define DEBUG 1
 
+/**
+ *  Public Methods
+ */
 
 /**
  * @brief   Opens the specified socket to the specified port
@@ -55,14 +59,20 @@
  * @param  flag: Flag at add the Socket N Command Register.
  * @retval Error status.
  */
-uint8_t SOCK_socket(uint8_t sn, uint8_t protocol, uint16_t port, uint8_t flag)
+uint8_t SOCK_socket(uint8_t sn, uint8_t protocol, uint16_t port)
 {
+    if (DEBUG)
+    {
+        printf("SOCK_socket(%u, 0x%02X, %u)\r\n", (uint16_t) sn,
+                (uint16_t) protocol, port);
+    }
+
     /* Validate Socket Range is 0 to 7 */
     if (sn > 7) return SOCK_ERR;
 
     /* Check that source IP address has been set */
     uint32_t ip_addr;
-    W5500_ReadSIPR((uint8_t* ) &ip_addr);
+    W5500_ReadSIPR((uint8_t*) &ip_addr);
     if (ip_addr == 0) return SOCK_ERR;
 
     /* Get port if not already assigned */
@@ -91,6 +101,11 @@ uint8_t SOCK_socket(uint8_t sn, uint8_t protocol, uint16_t port, uint8_t flag)
  */
 uint8_t SOCK_close(uint8_t sn)
 {
+    if (DEBUG)
+    {
+        printf("SOCK_close(%u)\r\n", (uint16_t) sn);
+    }
+
     /* Validate Socket Range is 0 to 7 */
     if (sn > 7) return SOCK_ERR;
 
@@ -112,6 +127,11 @@ uint8_t SOCK_close(uint8_t sn)
  */
 uint8_t SOCK_listen(uint8_t sn)
 {
+    if (DEBUG)
+    {
+        printf("SOCK_listen(%u)\r\n", (uint16_t) sn);
+    }
+
     /* Validate Socket Range is 0 to 7 */
     if (sn > 7) return SOCK_ERR;
 
@@ -145,8 +165,15 @@ uint8_t SOCK_listen(uint8_t sn)
  * @param  port: port of remote server
  * @retval Error status.
  */
-uint8_t SOCK_connect(uint8_t sn, uint8_t *addr, uint16_t port)
+uint8_t SOCK_connect(uint8_t sn, const uint8_t *addr, uint16_t port)
 {
+    if (DEBUG)
+    {
+        printf("SOCK_connect(%u, %u.%u.%u.%u, %u)\r\n", (uint16_t) sn,
+                (uint16_t) addr[0], (uint16_t) addr[1], (uint16_t) addr[2],
+                (uint16_t) addr[3], (uint16_t) port);
+    }
+
     /* Validate Socket Range is 0 to 7 */
     if (sn > 7) return SOCK_ERR;
 
@@ -201,6 +228,8 @@ uint8_t SOCK_connect(uint8_t sn, uint8_t *addr, uint16_t port)
         }
     }
 
+    if (DEBUG) printf("SOCK_connect( ) done\r\n");
+
     return SOCK_OK;
 }
 
@@ -212,6 +241,8 @@ uint8_t SOCK_connect(uint8_t sn, uint8_t *addr, uint16_t port)
  */
 uint8_t SOCK_disconnect(uint8_t sn)
 {
+    if (DEBUG) printf("SOCK_disconnect(%u)\r\n", (uint16_t) sn);
+
     /* Validate Socket Range is 0 to 7 */
     if (sn > 7) return SOCK_ERR;
 
@@ -247,15 +278,21 @@ uint8_t SOCK_disconnect(uint8_t sn)
  * @param  len: number of the bytes to write.
  * @retval Number of bytes sent or zero on error.
  */
-uint16_t SOCK_send(uint8_t sn, uint8_t *buf, uint16_t len)
+uint16_t SOCK_send(uint8_t sn, const uint8_t *buf, uint16_t len)
 {
+    if (DEBUG)
+    {
+        printf("SOCK_send(%u, 0x%lX, %u)\r\n", (uint16_t) sn, (uint32_t) buf,
+                (uint16_t) len);
+    }
+
     /* Validate Socket Range is 0 to 7 */
-    if (sn > 7) return 0;
+    if (sn > 7) return SOCK_ERR_PARAM;
 
     /* check that socket is in TCP mode */
     if ((W5500_ReadSnMR(sn) & W5500_SnMR_PROTOCOL) != W5500_SnMR_TCP)
     {
-        return 0;
+        return SOCK_ERR_MODE;
     }
 
     /* validate the data length */
@@ -266,19 +303,22 @@ uint16_t SOCK_send(uint8_t sn, uint8_t *buf, uint16_t len)
     uint8_t status = W5500_ReadSnSR(sn);
     if (status != W5500_SnSR_ESTABLISHED && status != W5500_SnSR_CLOSE_WAIT)
     {
-        return 0;
+        return SOCK_ERR_STATUS;
     }
 
     /* wait for enough space to free up for the whole message */
-    while (len <= W5500_ReadSnTX_FSR(sn))
+    if (DEBUG) printf("SOCK: waiting for FSR space\r\n");
+    while (W5500_ReadSnTX_FSR(sn) < len)
     {
         status = W5500_ReadSnSR(sn);
         if (status != W5500_SnSR_ESTABLISHED && status != W5500_SnSR_CLOSE_WAIT)
         {
-            return 0;
+            return SOCK_ERR_STATUS;
         }
+        /* TODO: add timeout */
     }
-    /* TODO: possibly inline SOCK_send_TX_data() */
+    if (DEBUG) printf("SOCK: FSR space available\r\n");
+
     W5500_WriteTxBuffer(sn, buf, len);
     W5500_ExecuteSnCmd(sn, W5500_SnCR_SEND);
 
@@ -295,6 +335,12 @@ uint16_t SOCK_send(uint8_t sn, uint8_t *buf, uint16_t len)
  */
 uint16_t SOCK_recv(uint8_t sn, uint8_t *buf, uint16_t len)
 {
+    if (DEBUG)
+    {
+        printf("SOCK_recv(%u, 0x%lX, %u)\r\n", (uint16_t) sn, (uint32_t) buf,
+                (uint16_t) len);
+    }
+
     /* Validate Socket Range is 0 to 7 */
     if (sn > 7) return 0;
 

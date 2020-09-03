@@ -1,7 +1,8 @@
 /**
  ******************************************************************************
- * @file           : w5500.c
- * @brief          : Driver for the Wiznet W5500 Ethernet Chip
+ * @file:   w5500.c
+ * @author: John Vedder
+ * @brief:  Driver for the Wiznet W5500 Ethernet Chip
  ******************************************************************************
  */
 
@@ -51,8 +52,12 @@
 #define W5500_CRITICAL_SPI_ENTER()
 #define W5500_CRITICAL_SPI_EXIT()
 
-/* Control printing of debug info the to console (UART) */
-#define W5500_DEBUG        1
+/* Debug control */
+#define DEBUG   1
+
+/**
+ *  Private Variables
+ */
 
 /**
  * Static buffers for building SPI packets to read/write registers.
@@ -62,6 +67,10 @@
  */
 static uint8_t txbuf[8];
 static uint8_t rxbuf[8];
+
+/**
+ * Public Methods
+ */
 
 /**
  * @brief Initializes the W5500.
@@ -76,11 +85,32 @@ void W5500_Init()
     W5500_SoftReset();
 
     /* set all 8 socket buffers to 2 KB Tx and 2 KB Rx */
-    for (uint8_t s=0; s<W5500_MAX_SOCKET_NUM; s++)
+    for (uint8_t s = 0; s < W5500_MAX_SOCKET_NUM; s++ )
     {
         W5500_WriteSnRXBUF_SIZE(s, W5500_RXBUF_SIZE >> 10);
         W5500_WriteSnTXBUF_SIZE(s, W5500_TXBUF_SIZE >> 10);
     }
+
+    /* Ethernet FeatherWing #3201 MAC address = 98:76:b6:10:62:21 */
+    const uint8_t mac[6] =
+    {0x98, 0x76, 0xb6, 0x10, 0x62, 0x21};
+    W5500_setMACAddress(mac);
+
+    /* Local Fixed IP address = 192.168.1.150 */
+    const uint8_t ip[4] =
+    {192, 168, 1, 150};
+    W5500_setIPAddress(ip);
+
+    /* Gateway IP address = 192.168.1.1 */
+    const uint8_t gw[4] =
+    {192, 168, 1, 1};
+    W5500_setGatewayIp(gw);
+
+    /* Subnet Mask = 255.255.255.0 */
+    const uint8_t sn[4] =
+    {255, 255, 255, 0};
+    W5500_setSubnetMask(sn);
+
 }
 
 /**
@@ -89,7 +119,7 @@ void W5500_Init()
  * @param  None
  * @retval None
  */
-void W5500_SoftReset( )
+void W5500_SoftReset()
 {
     W5500_WriteMR(W5500_MR_RST);
     Delay_ms(250);
@@ -122,15 +152,18 @@ void W5500_WriteReg8(uint8_t bsb, uint8_t reg, uint8_t val)
     /* Register Value (b-bit) */
     txbuf[3] = val;
 
-    if (W5500_DEBUG) printf("WriteReg8(0x%02X, 0x%02X, 0x%02X)\r\n", (uint16_t)bsb, (uint16_t)reg, (uint16_t)val);
+    if (DEBUG)
+    {
+        printf("W5500_WriteReg8(0x%02X, 0x%02X, 0x%02X)\r\n", (uint16_t) bsb,
+                (uint16_t) reg, (uint16_t) val);
+    }
 
     /* Write SPI packet */
     W5500_CRITICAL_SPI_ENTER();
     W5500_ASSERT_CS();
     Delay_ms(1);
-    HAL_SPI_Transmit(&hspi2, txbuf, len, TIMEOUT_1_SEC);
-    W5500_NEGATE_CS();
-    W5500_CRITICAL_SPI_EXIT();
+    HAL_SPI_Transmit( &hspi2, txbuf, len, TIMEOUT_1_SEC);
+    W5500_NEGATE_CS();W5500_CRITICAL_SPI_EXIT();
 }
 
 /**
@@ -161,15 +194,18 @@ void W5500_WriteReg16(uint8_t bsb, uint8_t reg, uint16_t val)
     txbuf[3] = (uint8_t) (val >> 8);
     txbuf[4] = (uint8_t) (val & 0xFF);
 
-    if (W5500_DEBUG) printf("WriteReg16(0x%02X, 0x%02X, 0x%04X)\r\n", (uint16_t)bsb, (uint16_t)reg, (uint16_t)val);
+    if (DEBUG)
+    {
+        printf("W5500_WriteReg16(0x%02X, 0x%02X, 0x%04X)\r\n", (uint16_t) bsb,
+                (uint16_t) reg, (uint16_t) val);
+    }
 
     /* Write SPI packet */
     W5500_CRITICAL_SPI_ENTER();
     W5500_ASSERT_CS();
     Delay_ms(1);
-    HAL_SPI_Transmit(&hspi2, txbuf, len, TIMEOUT_1_SEC);
-    W5500_NEGATE_CS();
-    W5500_CRITICAL_SPI_EXIT();
+    HAL_SPI_Transmit( &hspi2, txbuf, len, TIMEOUT_1_SEC);
+    W5500_NEGATE_CS();W5500_CRITICAL_SPI_EXIT();
 }
 
 /**
@@ -202,16 +238,18 @@ uint8_t W5500_ReadReg8(uint8_t bsb, uint8_t reg)
     W5500_CRITICAL_SPI_ENTER();
     W5500_ASSERT_CS();
     Delay_ms(1);
-    HAL_SPI_TransmitReceive(&hspi2, txbuf, rxbuf, len, TIMEOUT_1_SEC);
-    W5500_NEGATE_CS();
-    W5500_CRITICAL_SPI_EXIT();
+    HAL_SPI_TransmitReceive( &hspi2, txbuf, rxbuf, len, TIMEOUT_1_SEC);
+    W5500_NEGATE_CS();W5500_CRITICAL_SPI_EXIT();
 
-    if (W5500_DEBUG) printf("ReadReg8(0x%02X, 0x%02X)=0x%02X\r\n", (uint16_t)bsb, (uint16_t)reg, (uint16_t)rxbuf[3]);
+    if (DEBUG)
+    {
+        printf("W5500_ReadReg8(0x%02X, 0x%02X)=0x%02X\r\n", (uint16_t) bsb,
+                (uint16_t) reg, (uint16_t) rxbuf[3]);
+    }
 
     /* Read value (8-bits) */
     return rxbuf[3];
 }
-
 
 /**
  * @brief Reads an 16-bit register in the W5500.
@@ -240,19 +278,21 @@ uint16_t W5500_ReadReg16(uint8_t bsb, uint8_t reg)
     rxbuf[3] = 0x00;
     rxbuf[4] = 0x00;
 
-
     /* Write & Read SPI packets */
     W5500_CRITICAL_SPI_ENTER();
     W5500_ASSERT_CS();
     Delay_ms(1);
-    HAL_SPI_TransmitReceive(&hspi2, txbuf, rxbuf, len, TIMEOUT_1_SEC);
-    W5500_NEGATE_CS();
-    W5500_CRITICAL_SPI_EXIT();
+    HAL_SPI_TransmitReceive( &hspi2, txbuf, rxbuf, len, TIMEOUT_1_SEC);
+    W5500_NEGATE_CS();W5500_CRITICAL_SPI_EXIT();
 
     /* Read value (16-bits) */
     uint16_t ret = (rxbuf[3] << 8) | rxbuf[4];
 
-    if (W5500_DEBUG) printf("ReadReg16(0x%02X, 0x%02X)=0x%04X\r\n", (uint16_t)bsb, (uint16_t)reg, ret);
+    if (DEBUG)
+    {
+        printf("W5500_ReadReg16(0x%02X, 0x%02X)=0x%04X\r\n", (uint16_t) bsb,
+                (uint16_t) reg, ret);
+    }
 
     return ret;
 }
@@ -293,7 +333,8 @@ uint16_t W5500_ReadReg16Val(uint8_t bsb, uint8_t reg)
  * @param  len: number of the bytes to write.
  * @retval None
  */
-void W5500_WriteBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len)
+void W5500_WriteBuf(uint8_t bsb, uint16_t addr, const uint8_t *buf,
+        uint16_t len)
 {
     /* SPI Packet: [0:RegAddrHi][1:RegAddrLo][2:ControlByte][3:Data0]...[N+3:DataN] */
 
@@ -307,7 +348,12 @@ void W5500_WriteBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len)
     /* Control Byte */
     txbuf[2] = bsb | W5500_CB_WRITE;
 
-    if (W5500_DEBUG) printf("WriteBuf(0x%02X, 0x%04X, &0x%08lX, 0x%04X)\r\n", (uint16_t)bsb, (uint16_t)addr, (uint32_t) buf, (uint16_t)len);
+    if (DEBUG)
+    {
+        printf("W5500_WriteBuf(0x%02X, 0x%04X, &0x%08lX, 0x%04X)\r\n",
+                (uint16_t) bsb, (uint16_t) addr, (uint32_t) buf,
+                (uint16_t) len);
+    }
 
     /* Write 2-part SPI packet */
     W5500_CRITICAL_SPI_ENTER();
@@ -315,13 +361,14 @@ void W5500_WriteBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len)
     Delay_ms(1);
 
     /* Write header */
-    HAL_SPI_Transmit(&hspi2, txbuf, header_len, TIMEOUT_1_SEC);
+    HAL_SPI_Transmit( &hspi2, txbuf, header_len, TIMEOUT_1_SEC);
 
     /* Write buffer */
-    HAL_SPI_Transmit(&hspi2, buf, len, TIMEOUT_1_SEC);
+    /* NOTE: buf is cast from pointer to const to pointer to non-const */
+    /* the assumption is that HAL_SPI_Transmit(..) does not modify the buffer */
+    HAL_SPI_Transmit( &hspi2, (uint8_t*) buf, len, TIMEOUT_1_SEC);
 
-    W5500_NEGATE_CS();
-    W5500_CRITICAL_SPI_EXIT();
+    W5500_NEGATE_CS();W5500_CRITICAL_SPI_EXIT();
 }
 
 /**
@@ -351,7 +398,12 @@ void W5500_ReadBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len)
     /* Control Byte */
     txbuf[2] = bsb | W5500_CB_READ;
 
-    if (W5500_DEBUG) printf("ReadBuf(0x%02X, 0x%04X, &0x%08lX, 0x%04X)\r\n", (uint16_t)bsb, (uint16_t)addr, (uint32_t) buf, (uint16_t)len);
+    if (DEBUG)
+    {
+        printf("W5500_ReadBuf(0x%02X, 0x%04X, &0x%08lX, 0x%04X)\r\n",
+                (uint16_t) bsb, (uint16_t) addr, (uint32_t) buf,
+                (uint16_t) len);
+    }
 
     /* Write 2-part SPI packet */
     W5500_CRITICAL_SPI_ENTER();
@@ -359,13 +411,12 @@ void W5500_ReadBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len)
     Delay_ms(1);
 
     /* Write header */
-    HAL_SPI_Transmit(&hspi2, txbuf, header_len, TIMEOUT_1_SEC);
+    HAL_SPI_Transmit( &hspi2, txbuf, header_len, TIMEOUT_1_SEC);
 
     /* Write buffer */
-    HAL_SPI_Receive(&hspi2, buf, len, TIMEOUT_1_SEC);
+    HAL_SPI_Receive( &hspi2, buf, len, TIMEOUT_1_SEC);
 
-    W5500_NEGATE_CS();
-    W5500_CRITICAL_SPI_EXIT();
+    W5500_NEGATE_CS();W5500_CRITICAL_SPI_EXIT();
 }
 
 /**
@@ -384,8 +435,14 @@ void W5500_ReadBuf(uint8_t bsb, uint16_t addr, uint8_t *buf, uint16_t len)
  * @retval None
  *
  */
-void W5500_WriteTxBuffer(uint8_t sn, uint8_t *buf, uint16_t len)
+void W5500_WriteTxBuffer(uint8_t sn, const uint8_t *buf, uint16_t len)
 {
+    if (DEBUG)
+    {
+        printf("W5500_WriteTxBuffer(%u, 0x%lX, %u)\r\n", (uint16_t) sn,
+                (uint32_t) buf, (uint16_t) len);
+    }
+
     uint16_t tx_ptr;
     uint16_t buf_ptr;
 
@@ -476,6 +533,14 @@ void W5500_ReadRXBuffer(uint8_t sn, uint8_t *buf, uint16_t len)
  */
 void W5500_ExecuteSnCmd(uint8_t sn, uint8_t cmd)
 {
+    uint32_t count = 0;
+
+    if (DEBUG)
+    {
+        printf("W5500_ExecuteSnCmd(0x%02X, 0x%02X)\r\n", (uint16_t) sn,
+                (uint16_t) cmd);
+    }
+
     /* Send command to socket command register */
     W5500_WriteReg8(W5500_CB_SnREG(sn), W5500_REG_SnCR, cmd);
 
@@ -483,6 +548,9 @@ void W5500_ExecuteSnCmd(uint8_t sn, uint8_t cmd)
     while (W5500_ReadReg8(W5500_CB_SnREG(sn), W5500_REG_SnCR))
     {
         /* spin wait */
+        count++;
         /* TODO: add timeout */
     }
+    /* loop count for debug */
+    if (DEBUG) printf("Loop count: %lu\r\n", count);
 }

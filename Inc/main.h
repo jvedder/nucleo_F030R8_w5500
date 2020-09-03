@@ -32,6 +32,7 @@ extern "C" {
 
 #define TIMEOUT_1_SEC 10000
 
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 

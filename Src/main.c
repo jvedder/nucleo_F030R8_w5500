@@ -24,6 +24,7 @@
 #include "main.h"
 #include "w5500.h"
 #include "socket.h"
+#include "http_client.h"
 #include <stdio.h>
 
 
@@ -62,8 +63,7 @@ UART_HandleTypeDef huart2;
 /**
  * Private variables
  */
-static uint8_t read_buf[16];
-static uint8_t write_buf[16];
+static uint16_t toggle = 0;
 
 
 /* USER CODE END PV */
@@ -79,7 +79,6 @@ static void MX_SPI2_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-static void Show_buf(const char *name, const uint8_t *buf);
 
 /* USER CODE END PFP */
 
@@ -140,45 +139,11 @@ int main(void)
   {
       if (HAL_GPIO_ReadPin(USER_BUTTON_GPIO_Port,USER_BUTTON_Pin) == GPIO_PIN_RESET)
       {
-          write_buf[0] = 0x0A;
-          write_buf[1] = 0x0B;
-          write_buf[2] = 0x0C;
-          write_buf[3] = 0x0D;
-
-          /* Use GAR as a buffer */
-          Show_buf("WR", write_buf);
-          W5500_WriteGAR(write_buf);
-          W5500_ReadGAR(read_buf);
-          Show_buf("RD", read_buf);
-          printf("\r\n");
-          Delay_ms(10);
-
-          write_buf[0] = 0x55;
-          write_buf[1] = 0xAA;
-          write_buf[2] = 0x55;
-          write_buf[3] = 0xAA;
-
-          /* Use SUBR as a buffer */
-          Show_buf("WR", write_buf);
-          W5500_WriteSUBR(write_buf);
-          W5500_ReadSUBR(read_buf);
-          Show_buf("RD", read_buf);
-          printf("\r\n");
-          Delay_ms(10);
-
-          write_buf[0] = 0x12;
-          write_buf[1] = 0x34;
-          write_buf[2] = 0x56;
-          write_buf[3] = 0x78;
-
-          /* Use SIPR as buffer */
-          Show_buf("WR", write_buf);
-          W5500_WriteSIPR(write_buf);
-          W5500_ReadSIPR(read_buf);
-          Show_buf("RD", read_buf);
-          printf("\r\n");
-          Delay_ms(10);
+          toggle = 1 - toggle;
+          http_client_request(toggle);
       }
+      Delay_ms(100);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -397,16 +362,6 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void Show_buf(const char *name, const uint8_t *buf)
-{
-    printf(name);
-    printf(":");
-    for (int i=0; i< 4 ;i++)
-    {
-        printf(" 0x%02X", (uint16_t) buf[i]);
-    }
-    printf("\r\n");
-}
 
 /**
  * Delay using a spin wait for the specified number of milliseconds.
